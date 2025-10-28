@@ -48,10 +48,26 @@ class Eleve
     #[ORM\ManyToOne(inversedBy: 'eleves')]
     private ?Ecole $ecole = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $matricule = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $sexe = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $birthplace = null;
+
+    /**
+     * @var Collection<int, Moyenne>
+     */
+    #[ORM\OneToMany(targetEntity: Moyenne::class, mappedBy: 'eleve')]
+    private Collection $moyennes;
+
     public function __construct()
     {
         $this->grades = new ArrayCollection();
         $this->bulletins = new ArrayCollection();
+        $this->moyennes = new ArrayCollection();
     }
 
    
@@ -206,6 +222,72 @@ class Eleve
     public function setEcole(?Ecole $ecole): static
     {
         $this->ecole = $ecole;
+
+        return $this;
+    }
+
+    public function getMatricule(): ?string
+    {
+        return $this->matricule;
+    }
+
+    public function setMatricule(string $matricule): static
+    {
+        $this->matricule = $matricule;
+
+        return $this;
+    }
+
+    public function getSexe(): ?string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(string $sexe): static
+    {
+        $this->sexe = $sexe;
+
+        return $this;
+    }
+
+    public function getBirthplace(): ?string
+    {
+        return $this->birthplace;
+    }
+
+    public function setBirthplace(string $birthplace): static
+    {
+        $this->birthplace = $birthplace;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Moyenne>
+     */
+    public function getMoyennes(): Collection
+    {
+        return $this->moyennes;
+    }
+
+    public function addMoyenne(Moyenne $moyenne): static
+    {
+        if (!$this->moyennes->contains($moyenne)) {
+            $this->moyennes->add($moyenne);
+            $moyenne->setEleve($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMoyenne(Moyenne $moyenne): static
+    {
+        if ($this->moyennes->removeElement($moyenne)) {
+            // set the owning side to null (unless already changed)
+            if ($moyenne->getEleve() === $this) {
+                $moyenne->setEleve(null);
+            }
+        }
 
         return $this;
     }

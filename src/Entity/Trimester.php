@@ -34,10 +34,30 @@ class Trimester
     #[ORM\OneToMany(targetEntity: Grade::class, mappedBy: 'trimester', orphanRemoval: true)]
     private Collection $grades;
 
+    /**
+     * @var Collection<int, GradeH>
+     */
+    #[ORM\OneToMany(targetEntity: GradeH::class, mappedBy: 'trimester', orphanRemoval: true)]
+    private Collection $gradeHs;
+
+    /**
+     * @var Collection<int, GradeP>
+     */
+    #[ORM\OneToMany(targetEntity: GradeP::class, mappedBy: 'Trimester', orphanRemoval: true)]
+    private Collection $gradePs;
+
+    /**
+     * @var Collection<int, Cycle>
+     */
+    #[ORM\OneToMany(targetEntity: Cycle::class, mappedBy: 'Trimester')]
+    private Collection $cycles;
     public function __construct()
     {
         $this->bulletins = new ArrayCollection();
         $this->grades = new ArrayCollection();
+        $this->gradeHs = new ArrayCollection();
+        $this->gradePs = new ArrayCollection();
+        $this->cycles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,4 +148,96 @@ class Trimester
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, GradeH>
+     */
+    public function getGradeHs(): Collection
+    {
+        return $this->gradeHs;
+    }
+
+    public function addGradeH(GradeH $gradeH): static
+    {
+        if (!$this->gradeHs->contains($gradeH)) {
+            $this->gradeHs->add($gradeH);
+            $gradeH->setTrimester($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGradeH(GradeH $gradeH): static
+    {
+        if ($this->gradeHs->removeElement($gradeH)) {
+            // set the owning side to null (unless already changed)
+            if ($gradeH->getTrimester() === $this) {
+                $gradeH->setTrimester(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GradeP>
+     */
+    public function getGradePs(): Collection
+    {
+        return $this->gradePs;
+    }
+
+    public function addGradeP(GradeP $gradeP): static
+    {
+        if (!$this->gradePs->contains($gradeP)) {
+            $this->gradePs->add($gradeP);
+            $gradeP->setTrimester($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGradeP(GradeP $gradeP): static
+    {
+        if ($this->gradePs->removeElement($gradeP)) {
+            // set the owning side to null (unless already changed)
+            if ($gradeP->getTrimester() === $this) {
+                $gradeP->setTrimester(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Cycle>
+     */
+    public function getCycles(): Collection
+    {
+        return $this->cycles;
+    }
+
+    public function addCycle(Cycle $cycle): static
+    {
+        if (!$this->cycles->contains($cycle)) {
+            $this->cycles->add($cycle);
+            $cycle->setTrimester($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCycle(Cycle $cycle): static
+    {
+        if ($this->cycles->removeElement($cycle)) {
+            // set the owning side to null (unless already changed)
+            if ($cycle->getTrimester() === $this) {
+                $cycle->setTrimester(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
 }

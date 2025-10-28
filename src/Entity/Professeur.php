@@ -33,6 +33,9 @@ class Professeur
     #[ORM\ManyToOne(inversedBy: 'professeurs')]
     private ?Ecole $ecole = null;
 
+    #[ORM\ManyToOne(inversedBy: 'professeur')]
+    private ?Classe $classe = null;
+
     public function __construct()
     {
         $this->matieres = new ArrayCollection();
@@ -117,6 +120,18 @@ class Professeur
     public function setEcole(?Ecole $ecole): static
     {
         $this->ecole = $ecole;
+
+        return $this;
+    }
+
+    public function getClasse(): ?Classe
+    {
+        return $this->classe;
+    }
+
+    public function setClasse(?Classe $classe): static
+    {
+        $this->classe = $classe;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EcoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EcoleRepository::class)]
@@ -40,11 +41,27 @@ class Ecole
     #[ORM\JoinColumn(nullable: false)]
     private ?User $utilisateur = null;
 
+    /**
+     * @var Collection<int, Bulletin>
+     */
+    #[ORM\OneToMany(targetEntity: Bulletin::class, mappedBy: 'ecole', orphanRemoval: true)]
+    private Collection $bulletins;
+
+    #[ORM\Column(type: Types::BINARY, nullable: true)]
+    private $logo = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $phone = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $directeur = null;
+
     public function __construct()
     {
         $this->professeurs = new ArrayCollection();
         $this->eleves = new ArrayCollection();
         $this->Classe = new ArrayCollection();
+        $this->bulletins = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +179,72 @@ class Ecole
     public function setUtilisateur(?User $utilisateur): static
     {
         $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bulletin>
+     */
+    public function getBulletins(): Collection
+    {
+        return $this->bulletins;
+    }
+
+    public function addBulletin(Bulletin $bulletin): static
+    {
+        if (!$this->bulletins->contains($bulletin)) {
+            $this->bulletins->add($bulletin);
+            $bulletin->setEcole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBulletin(Bulletin $bulletin): static
+    {
+        if ($this->bulletins->removeElement($bulletin)) {
+            // set the owning side to null (unless already changed)
+            if ($bulletin->getEcole() === $this) {
+                $bulletin->setEcole(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLogo()
+    {
+        return $this->logo;
+    }
+
+    public function setLogo($logo): static
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getDirecteur(): ?string
+    {
+        return $this->directeur;
+    }
+
+    public function setDirecteur(string $directeur): static
+    {
+        $this->directeur = $directeur;
 
         return $this;
     }

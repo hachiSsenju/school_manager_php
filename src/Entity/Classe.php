@@ -24,8 +24,7 @@ class Classe
     #[ORM\Column]
     private ?int $frais = null;
 
-    #[ORM\Column]
-    private ?int $nbMax = null;
+
 
     /**
      * @var Collection<int, Matiere>
@@ -42,7 +41,7 @@ class Classe
     /**
      * @var Collection<int, Trimester>
      */
-    #[ORM\OneToMany(targetEntity: Trimester::class, mappedBy: 'classe', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Trimester::class, mappedBy:'classe',cascade:['persist'], orphanRemoval: true)]
     private Collection $trimesters;
 
     /**
@@ -54,12 +53,19 @@ class Classe
     #[ORM\ManyToOne(inversedBy: 'Classe')]
     private ?Ecole $ecole = null;
 
+    /**
+     * @var Collection<int, Professeur>
+     */
+    #[ORM\OneToMany(targetEntity: Professeur::class, mappedBy: 'classe')]
+    private Collection $professeur;
+
     public function __construct()
     {
         $this->matieres = new ArrayCollection();
         $this->eleves = new ArrayCollection();
         $this->trimesters = new ArrayCollection();
         $this->bulletins = new ArrayCollection();
+        $this->professeur = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -103,17 +109,6 @@ class Classe
         return $this;
     }
 
-    public function getNbMax(): ?int
-    {
-        return $this->nbMax;
-    }
-
-    public function setNbMax(int $nbMax): static
-    {
-        $this->nbMax = $nbMax;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Matiere>
@@ -243,6 +238,36 @@ class Classe
     public function setEcole(?Ecole $ecole): static
     {
         $this->ecole = $ecole;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Professeur>
+     */
+    public function getProfesseur(): Collection
+    {
+        return $this->professeur;
+    }
+
+    public function addProfesseur(Professeur $professeur): static
+    {
+        if (!$this->professeur->contains($professeur)) {
+            $this->professeur->add($professeur);
+            $professeur->setClasse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProfesseur(Professeur $professeur): static
+    {
+        if ($this->professeur->removeElement($professeur)) {
+            // set the owning side to null (unless already changed)
+            if ($professeur->getClasse() === $this) {
+                $professeur->setClasse(null);
+            }
+        }
 
         return $this;
     }

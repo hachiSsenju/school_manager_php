@@ -36,7 +36,7 @@ final class MatiereController extends AbstractController
                     'nom'  => $classe->getNom(),
                     'niveau'  => $classe->getNiveau(),
                     'frais'  => $classe->getFrais(),
-                    'nbMax'  => $classe->getNbMax(),
+                    
                 ] : null,
             ];
         }, $matieres);
