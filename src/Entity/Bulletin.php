@@ -22,11 +22,6 @@ class Bulletin
     #[ORM\ManyToOne(inversedBy: 'bulletins')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Classe $Classe = null;
-
-    #[ORM\ManyToOne(inversedBy: 'bulletins')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Trimester $trimester = null;
-
     
     #[ORM\Column]
     private ?bool $redoublant = null;
@@ -109,18 +104,6 @@ class Bulletin
     public function setClasse(?Classe $Classe): static
     {
         $this->Classe = $Classe;
-
-        return $this;
-    }
-
-    public function getTrimester(): ?Trimester
-    {
-        return $this->trimester;
-    }
-
-    public function setTrimester(?Trimester $trimester): static
-    {
-        $this->trimester = $trimester;
 
         return $this;
     }

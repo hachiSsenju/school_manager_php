@@ -22,16 +22,14 @@ final class BulletinController extends AbstractController
     public function add(Request $request, EcoleRepository $ecoleRepository, EleveRepository $eleveRepository, ClasseRepository $classeRepository, TrimesterRepository $trimesterRepository, EntityManagerInterface $em): Response
     {
         $data = json_decode($request->getContent(), true);
-        if (!$data || !isset($data['eleve_id'], $data['classe_id'], $data['ecole_id'], $data['trimester_id'], $data['annee_scolaire'], $data['date'])) {
+        if (!$data || !isset($data['eleve_id'], $data['classe_id'], $data['ecole_id'], $data['annee_scolaire'], $data['date'])) {
             return $this->json(['error' => 'Invalid payload'], 400);
         }
         $eleve_id = intval($data['eleve_id']);
         $ecole_id = intval($data['ecole_id']);
         $classe_id = intval($data['classe_id']);
-        $trimester_id = intval($data['trimester_id']);
         $eleve = $eleveRepository->find($eleve_id);
         $classe = $classeRepository->find($classe_id);
-        $trimester = $trimesterRepository->find($trimester_id);
         $ecole = $ecoleRepository->find($ecole_id);
         if (!$eleve) {
             return $this->json(['error' => 'Eleve not found'], 404);
@@ -39,16 +37,12 @@ final class BulletinController extends AbstractController
         if (!$classe) {
             return $this->json(['error' => 'Classe not found'], 404);
         }
-        if (!$trimester) {
-            return $this->json(['error' => 'Trimester not found'], 404);
-        }
         if (!$ecole) {
             return $this->json(['error' => 'Ecole not found'], 404);
         }
         $bulletin = new Bulletin();
         $bulletin->setEleve($eleve);
         $bulletin->setClasse($classe);
-        $bulletin->setTrimester($trimester);
         $bulletin->setRedoublant(false);
         $bulletin->setAnneeScholaire($data['annee_scolaire']);
         $bulletin->setEcole($ecole);
@@ -82,10 +76,6 @@ final class BulletinController extends AbstractController
                 'id' => $bulletin->getClasse()->getId(),
                 'nom' => $bulletin->getClasse()->getNom(),
                 'niveau' => $bulletin->getClasse()->getNiveau(),
-            ] : null,
-            'trimester' => $bulletin->getTrimester() ? [
-                'id' => $bulletin->getTrimester()->getId(),
-                'libelle' => $bulletin->getTrimester()->getLibelle()
             ] : null,
             'Cycles' => array_map(function ($cycle) {
                 return [
