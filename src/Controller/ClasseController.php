@@ -348,18 +348,7 @@ final class ClasseController extends AbstractController
                                     }, $cycle->getGradeHs()->toArray())
                                 ];
                             }, $bulletin->getCycles()->toArray()),
-                            "gradeP" => array_map(function ($gradep) {
-                                return [
-                                    'id' => $gradep()->getId(),
-                                    'note' => $gradep->getNote(),
-                                    'mois' => $gradep->getMois(),
-                                    "matiere" => $gradep->getMatiere() ? [
-                                        'id' => $gradep->getMatiere()->getId(),
-                                        'coef' => $gradep->getMatiere()->getCoefficient(),
-                                    ] : null,
-
-                                ];
-                            }, $bulletin->getGradePs()->toArray())
+                           
 
 
                         ];
@@ -437,18 +426,7 @@ final class ClasseController extends AbstractController
                                     }, $cycle->getGradeHs()->toArray())
                                 ];
                             }, $bulletin->getCycles()->toArray()),
-                            "gradeP" => array_map(function ($gradep) {
-                                return [
-                                    'id' => $gradep()->getId(),
-                                    'note' => $gradep->getNote(),
-                                    'mois' => $gradep->getMois(),
-                                    "matiere" => $gradep->getMatiere() ? [
-                                        'id' => $gradep->getMatiere()->getId(),
-                                        'coef' => $gradep->getMatiere()->getCoefficient(),
-                                    ] : null,
-
-                                ];
-                            }, $bulletin->getGradePs()->toArray())
+                           
 
                         ];
                     }, $eleve->getBulletins()->toArray()),
@@ -486,30 +464,6 @@ final class ClasseController extends AbstractController
                     $classe->addProfesseur($professeur);
                 }
             }
-        }
-        if ($data['niveau'] === 'primaire' || $data['niveau'] === 'maternelle') {
-            $trimester = new Trimester();
-            $trimester->setClasse($classe);
-            $trimester->setLibelle('Niveau 1');
-            $trimester2 = new Trimester();
-            $trimester2->setClasse($classe);
-            $trimester2->setLibelle('Niveau 2');
-            $trimester3 = new Trimester();
-            $trimester3->setClasse($classe);
-            $trimester3->setLibelle('Niveau 3');
-            $em->persist($trimester);
-            $em->persist($trimester2);
-            $em->persist($trimester3);
-        }
-        if ($data['niveau'] == 'lycee' || $data['niveau'] == 'college') {
-            $trimester = new Trimester();
-            $trimester->setClasse($classe);
-            $trimester->setLibelle('1er Cycle');
-            $trimester2 = new Trimester();
-            $trimester2->setClasse($classe);
-            $trimester2->setLibelle('2ème Cycle');
-            $em->persist($trimester);
-            $em->persist($trimester2);
         }
         $em->persist($classe);
         $em->flush();

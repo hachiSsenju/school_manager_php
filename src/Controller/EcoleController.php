@@ -58,20 +58,7 @@ final class EcoleController extends AbstractController
                                 "bulletins" => array_map(function ($bulletin) {
                                     return [
                                         'id' => $bulletin->getId(),
-                                        'grades' => array_map(function ($grade) {
-                                            return [
-                                                'id' => $grade->getId(),
-                                                'note' => $grade->getNote(),
-                                                'note_maximal' => $grade->getNoteMaximal(),
-                                                'type_examen' => $grade->getTypeExamen(),
-                                                'date' => $grade->getDate(),
-                                                'matiere' => $grade->getMatiere() ? [
-                                                    'id' => $grade->getMatiere()->getId(),
-                                                    'nom' => $grade->getMatiere()->getNom(),
-                                                    'coef' => $grade->getMatiere()->getCoefficient(),
-                                                ] : null,
-                                            ];
-                                        }, $bulletin->getGradePs()->toArray())
+                                        
                                     ];
                                 }, $eleve->getBulletins()->toArray()),
                                 "classe" => [
@@ -101,21 +88,7 @@ final class EcoleController extends AbstractController
                         "bulletins" => array_map(function ($bulletin) {
                             return [
                                 'id' => $bulletin->getId(),
-                                'grades' => array_map(function ($grade) {
-                                    return [
-                                        'id' => $grade->getId(),
-                                        'note' => $grade->getNote(),
-                                        'note_maximal' => $grade->getNoteMaximal(),
-                                        'type_examen' => $grade->getTypeExamen(),
-
-                                        'date' => $grade->getDate(),
-                                        'matiere' => $grade->getMatiere() ? [
-                                            'id' => $grade->getMatiere()->getId(),
-                                            'nom' => $grade->getMatiere()->getNom(),
-                                            'coef' => $grade->getMatiere()->getCoefficient(),
-                                        ] : null,
-                                    ];
-                                }, $bulletin->getGradePs()->toArray() ?? $bulletin->getGradeHs()->toArray())
+                                
                             ];
                         }, $eleve->getBulletins()->toArray()),
                     ];
@@ -230,20 +203,7 @@ final class EcoleController extends AbstractController
                                             ] : null,
                                         ];
                                     }, $bulletin->getGradeHs()->toArray()),
-                                    'gradesP' => array_map(function ($grade) {
-                                        return [
-                                            'id' => $grade->getId(),
-                                            'note' => $grade->getNote(),
-                                            'mois' => $grade->getMois(),
-
-                                            'date' => $grade->getDate(),
-                                            'matiere' => $grade->getMatiere() ? [
-                                                'id' => $grade->getMatiere()->getId(),
-                                                'nom' => $grade->getMatiere()->getNom(),
-                                                'coef' => $grade->getMatiere()->getCoefficient(),
-                                            ] : null,
-                                        ];
-                                    }, $bulletin->getGradePs()->toArray())
+                                   
                                 ];
                             }, $eleve->getBulletins()->toArray()),
                         ];
@@ -295,18 +255,7 @@ final class EcoleController extends AbstractController
                                     }, $cycle->getGradeHs()->toArray())
                                 ];
                             }, $bulletin->getCycles()->toArray()),
-                            "gradeP" => array_map(function ($gradep) {
-                                return [
-                                    'id' => $gradep()->getId(),
-                                    'note' => $gradep->getNote(),
-                                    'mois' => $gradep->getMois(),
-                                    "matiere" => $gradep->getMatiere() ? [
-                                        'id' => $gradep->getMatiere()->getId(),
-                                        'coef' => $gradep->getMatiere()->getCoefficient(),
-                                    ] : null,
-
-                                ];
-                            }, $bulletin->getGradePs()->toArray())
+                           
 
                         ];
                     }, $eleve->getBulletins()->toArray()),

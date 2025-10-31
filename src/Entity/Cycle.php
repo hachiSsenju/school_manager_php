@@ -28,8 +28,6 @@ class Cycle
     #[ORM\JoinColumn(nullable: false)]
     private ?Bulletin $Bulletin = null;
 
-    #[ORM\ManyToOne(inversedBy: 'cycles')]
-    private ?Trimester $Trimester = null;
 
     /**
      * @var Collection<int, Moyenne>
@@ -108,17 +106,7 @@ class Cycle
         return $this;
     }
 
-    public function getTrimester(): ?Trimester
-    {
-        return $this->Trimester;
-    }
 
-    public function setTrimester(?Trimester $Trimester): static
-    {
-        $this->Trimester = $Trimester;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Moyenne>

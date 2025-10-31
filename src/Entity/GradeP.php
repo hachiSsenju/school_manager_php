@@ -16,9 +16,6 @@ class GradeP
     #[ORM\Column]
     private ?int $note = null;
 
-    #[ORM\Column]
-    private ?int $mois = null;
-
     #[ORM\ManyToOne(inversedBy: 'gradePs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Bulletin $Bulletin = null;
@@ -27,9 +24,9 @@ class GradeP
     #[ORM\JoinColumn(nullable: false)]
     private ?Matiere $matiere = null;
 
-    #[ORM\ManyToOne(inversedBy: 'gradePs')]
+    #[ORM\ManyToOne(inversedBy: 'gradeP')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Trimester $Trimester = null;
+    private ?Mois $mois = null;
 
     public function getId(): ?int
     {
@@ -48,18 +45,7 @@ class GradeP
         return $this;
     }
 
-    public function getMois(): ?int
-    {
-        return $this->mois;
-    }
-
-    public function setMois(int $mois): static
-    {
-        $this->mois = $mois;
-
-        return $this;
-    }
-
+ 
     public function getBulletin(): ?Bulletin
     {
         return $this->Bulletin;
@@ -84,14 +70,15 @@ class GradeP
         return $this;
     }
 
-    public function getTrimester(): ?Trimester
+    
+    public function getMois(): ?Mois
     {
-        return $this->Trimester;
+        return $this->mois;
     }
 
-    public function setTrimester(?Trimester $Trimester): static
+    public function setMois(?Mois $mois): static
     {
-        $this->Trimester = $Trimester;
+        $this->mois = $mois;
 
         return $this;
     }

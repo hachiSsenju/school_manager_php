@@ -33,11 +33,6 @@ class Eleve
     #[ORM\ManyToOne(inversedBy: 'eleves')]
     private ?Classe $classe = null;
 
-    /**
-     * @var Collection<int, Grade>
-     */
-    #[ORM\OneToMany(targetEntity: Grade::class, mappedBy: 'eleve', orphanRemoval: true)]
-    private Collection $grades;
 
     /**
      * @var Collection<int, Bulletin>
@@ -65,7 +60,6 @@ class Eleve
 
     public function __construct()
     {
-        $this->grades = new ArrayCollection();
         $this->bulletins = new ArrayCollection();
         $this->moyennes = new ArrayCollection();
     }
@@ -154,37 +148,7 @@ class Eleve
      * @return Collection<int, Grade>
      */
 
-    /**
-     * @return Collection<int, Grade>
-     */
-    public function getGrades(): Collection
-    {
-        return $this->grades;
-    }
-
-    public function addGrade(Grade $grade): static
-    {
-        if (!$this->grades->contains($grade)) {
-            $this->grades->add($grade);
-            $grade->setEleve($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGrade(Grade $grade): static
-    {
-        if ($this->grades->removeElement($grade)) {
-            // set the owning side to null (unless already changed)
-            if ($grade->getEleve() === $this) {
-                $grade->setEleve(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
+     /**
      * @return Collection<int, Bulletin>
      */
     public function getBulletins(): Collection

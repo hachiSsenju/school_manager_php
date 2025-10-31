@@ -19,50 +19,64 @@ final class MoyenneController extends AbstractController
     #[Route('/api/moyenne/classe/{id}', name: 'list_moyenne')]
     public function getMoyennesByClasseAndCycleId(int $id, Request $request, EleveRepository $eleveRepository, CycleRepository $cycleRepository, EntityManagerInterface $em): Response
     {
-        $cycleIndex = intval($request->query->get('cycle_index', 0));
         $classe_id = intval($id);
         $classe = $em->getRepository(Classe::class)->find($classe_id);
         if (!$classe) {
             return $this->json(['error' => 'classe not found'], 404);
         }
+
         $eleves = $eleveRepository->findBy(['classe' => $classe]);
-        $data = [];
+
+        // Group cycles by their position (cycle index) across each eleve's bulletins
+        $groups = []; // keyed by cycle index (0-based)
+
         foreach ($eleves as $eleve) {
             $bulletins = $eleve->getBulletins();
-            if (isset($bulletins[0])) {
-                $cycles = $bulletins[0]->getCycles();
-                if (isset($cycles[$cycleIndex])) {
-                    $moyenne = $cycles[$cycleIndex]->getMoyenne();
-                    $data[] = [
-                        "value" => $moyenne,
-                        "pivot" => [
-                            "eleve_id" => $eleve->getId(),
-                            "cycle_id" => $cycles[$cycleIndex]->getId(),
-                        ],
+            foreach ($bulletins as $bulletin) {
+                $cycles = $bulletin->getCycles();
+                foreach ($cycles as $index => $cycle) {
+                    $groups[$index][] = [
+                        'eleve_id' => $eleve->getId(),
+                        'cycle_id' => $cycle->getId(),
+                        'value' => $cycle->getMoyenne(),
+                        'classe_nom' => $classe->getNom(), // include classe name per entry
+                        'entity' => $cycle, // keep entity to set rank later
                     ];
                 }
             }
         }
-        // Sort descending by 'value'
-        usort($data, function ($a, $b) {
-            return $b['value'] <=> $a['value'];
-        });
-        // Add rank and set it to the cycle using setRank
-        foreach ($data as $i => &$item) {
-            $rank = $i + 1;
-            $item['rank'] = $rank;
-            $cycle = $em->getRepository(Cycle::class)->find($item['pivot']['cycle_id']);
-            if ($cycle) {
-            $cycle->setRank($rank);
+
+        // Prepare response structure: for each cycle position produce entries and assign ranks
+        $result = [];
+        foreach ($groups as $index => $entries) {
+            // sort descending by value
+            usort($entries, function ($a, $b) {
+                return $b['value'] <=> $a['value'];
+            });
+
+            // assign ranks (1-based) and persist rank to each cycle entity
+            foreach ($entries as $pos => &$entry) {
+                $rank = $pos + 1;
+                $entry['rank'] = $rank;
+                if (isset($entry['entity']) && $entry['entity'] !== null) {
+                    $entry['entity']->setRank($rank);
+                }
+                // remove entity from response payload
+                unset($entry['entity']);
             }
+            unset($entry);
+
+            $result[] = [
+                'cycle_position' => $index + 1, // human-friendly 1-based position
+                'entries' => array_values($entries),
+            ];
         }
-        unset($item);
+
+        // persist all rank changes
         $em->flush();
 
-        return $this->json(
-            ["moyennes" => $data], 201);
-        }
-
+        return $this->json(['cycles' => $result], 200);
+    }
 
     #[Route('/api/moyenne', name: 'add_Moyenne', methods: ['POST'])]
     public function addMoyenne(Request $request, EntityManagerInterface $em): Response

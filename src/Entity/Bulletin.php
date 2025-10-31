@@ -54,11 +54,6 @@ class Bulletin
     #[ORM\OneToMany(targetEntity: Matiere::class, mappedBy: 'bulletin')]
     private Collection $matiere;
 
-    /**
-     * @var Collection<int, GradeP>
-     */
-    #[ORM\OneToMany(targetEntity: GradeP::class, mappedBy: 'Bulletin', orphanRemoval: true)]
-    private Collection $gradePs;
 
     /**
      * @var Collection<int, Cycle>
@@ -72,12 +67,18 @@ class Bulletin
     #[ORM\OneToMany(targetEntity: GradeH::class, mappedBy: 'bulletin')]
     private Collection $gradeHs;
 
+    /**
+     * @var Collection<int, Mois>
+     */
+    #[ORM\OneToMany(targetEntity: Mois::class, mappedBy: 'bulletin')]
+    private Collection $mois;
+
     public function __construct()
     {
         $this->matiere = new ArrayCollection();
-        $this->gradePs = new ArrayCollection();
         $this->cycles = new ArrayCollection();
         $this->gradeHs = new ArrayCollection();
+        $this->mois = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -237,33 +238,7 @@ class Bulletin
     /**
      * @return Collection<int, GradeP>
      */
-    public function getGradePs(): Collection
-    {
-        return $this->gradePs;
-    }
-
-    public function addGradeP(GradeP $gradeP): static
-    {
-        if (!$this->gradePs->contains($gradeP)) {
-            $this->gradePs->add($gradeP);
-            $gradeP->setBulletin($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGradeP(GradeP $gradeP): static
-    {
-        if ($this->gradePs->removeElement($gradeP)) {
-            // set the owning side to null (unless already changed)
-            if ($gradeP->getBulletin() === $this) {
-                $gradeP->setBulletin(null);
-            }
-        }
-
-        return $this;
-    }
-
+ 
     /**
      * @return Collection<int, Cycle>
      */
@@ -318,6 +293,36 @@ class Bulletin
             // set the owning side to null (unless already changed)
             if ($gradeH->getBulletin() === $this) {
                 $gradeH->setBulletin(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Mois>
+     */
+    public function getMois(): Collection
+    {
+        return $this->mois;
+    }
+
+    public function addMois(Mois $moi): static
+    {
+        if (!$this->mois->contains($moi)) {
+            $this->mois->add($moi);
+            $moi->setBulletin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMoi(Mois $moi): static
+    {
+        if ($this->mois->removeElement($moi)) {
+            // set the owning side to null (unless already changed)
+            if ($moi->getBulletin() === $this) {
+                $moi->setBulletin(null);
             }
         }
 

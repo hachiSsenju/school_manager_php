@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Bulletin;
 use App\Entity\Cycle;
+use App\Entity\Mois;
 use App\Repository\BulletinRepository;
 use App\Repository\ClasseRepository;
 use App\Repository\EcoleRepository;
@@ -61,6 +62,47 @@ final class BulletinController extends AbstractController
             $bulletin->addCycle($cyle1);
             $bulletin->addCycle($cyle2);
             $bulletin->addCycle($cyle3);
+        }
+        if ($classe->getNiveau() == "primaire") {
+            $mois1 = new Mois();
+            $mois1->setLibelle('Oct.');
+            $mois2 = new Mois();
+            $mois2->setLibelle('Nov.');
+            $mois3 = new Mois();
+            $mois3->setLibelle('Déc.');
+            $mois4 = new Mois();
+            $mois4->setLibelle('Jan.');
+            $mois5 = new Mois();
+            $mois5->setLibelle('Févr.');
+            $mois6 = new Mois();
+            $mois6->setLibelle('Mars');
+            $mois7 = new Mois();
+            $mois7->setLibelle('Avril');
+            $mois8 = new Mois();
+            $mois8->setLibelle('Mai');
+            $mois9 = new Mois();
+            $mois9->setLibelle('Juin');
+            
+            $mois1->setBulletin($bulletin);
+            $mois2->setBulletin($bulletin);
+            $mois3->setBulletin($bulletin);
+            $mois4->setBulletin($bulletin);
+            $mois5->setBulletin($bulletin);
+            $mois6->setBulletin($bulletin);
+            $mois7->setBulletin($bulletin);
+            $mois8->setBulletin($bulletin);
+            $mois9->setBulletin($bulletin);
+            
+
+            $em->persist($mois1);
+            $em->persist($mois2);
+            $em->persist($mois3);
+            $em->persist($mois4);
+            $em->persist($mois5);
+            $em->persist($mois6);
+            $em->persist($mois7);
+            $em->persist($mois8);
+            $em->persist($mois9);
         }
         $em->persist($bulletin);
         $em->flush();
@@ -155,7 +197,7 @@ final class BulletinController extends AbstractController
             $eleve = $bulletin->getEleve();
             return [
                 'id' => $bulletin->getId(),
-                
+
                 'classe' => $bulletin->getClasse()->getNom(),
                 'eleve' => [
                     'id' => $eleve->getId(),
@@ -214,7 +256,7 @@ final class BulletinController extends AbstractController
             $eleve = $bulletin->getEleve();
             return [
                 'id' => $bulletin->getId(),
-                
+
                 'classe' => $bulletin->getClasse()->getNom(),
                 'eleve' => [
                     'id' => $eleve->getId(),
@@ -361,7 +403,7 @@ final class BulletinController extends AbstractController
                                 'coef' => $gradeh->getMatiere()->getCoefficient(),
                             ] : null,
                             "date" => $gradeh->getDate(),
-                            
+
                         ];
                     }, $cycle->getGradeHs()->toArray())
                 ];

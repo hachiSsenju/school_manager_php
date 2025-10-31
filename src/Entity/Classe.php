@@ -38,11 +38,6 @@ class Classe
     #[ORM\OneToMany(targetEntity: Eleve::class, mappedBy: 'classe')]
     private Collection $eleves;
 
-    /**
-     * @var Collection<int, Trimester>
-     */
-    #[ORM\OneToMany(targetEntity: Trimester::class, mappedBy:'classe',cascade:['persist'], orphanRemoval: true)]
-    private Collection $trimesters;
 
     /**
      * @var Collection<int, Bulletin>
@@ -63,7 +58,6 @@ class Classe
     {
         $this->matieres = new ArrayCollection();
         $this->eleves = new ArrayCollection();
-        $this->trimesters = new ArrayCollection();
         $this->bulletins = new ArrayCollection();
         $this->professeur = new ArrayCollection();
     }
@@ -170,37 +164,7 @@ class Classe
         return $this;
     }
 
-    /**
-     * @return Collection<int, Trimester>
-     */
-    public function getTrimesters(): Collection
-    {
-        return $this->trimesters;
-    }
-
-    public function addTrimester(Trimester $trimester): static
-    {
-        if (!$this->trimesters->contains($trimester)) {
-            $this->trimesters->add($trimester);
-            $trimester->setClasse($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTrimester(Trimester $trimester): static
-    {
-        if ($this->trimesters->removeElement($trimester)) {
-            // set the owning side to null (unless already changed)
-            if ($trimester->getClasse() === $this) {
-                $trimester->setClasse(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
+     /**
      * @return Collection<int, Bulletin>
      */
     public function getBulletins(): Collection

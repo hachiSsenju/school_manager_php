@@ -27,11 +27,7 @@ class Matiere
     #[ORM\ManyToOne(inversedBy: 'matieres')]
     private ?Classe $classe = null;
 
-    /**
-     * @var Collection<int, Grade>
-     */
-    #[ORM\OneToMany(targetEntity: Grade::class, mappedBy: 'matiere', orphanRemoval: true)]
-    private Collection $grades;
+
 
     #[ORM\ManyToOne(inversedBy: 'matiere')]
     private ?Bulletin $bulletin = null;
@@ -49,7 +45,6 @@ class Matiere
     private Collection $gradePs;
     public function __construct()
     {
-        $this->grades = new ArrayCollection();
         $this->gradeHs = new ArrayCollection();
         $this->gradePs = new ArrayCollection();
     }
@@ -103,36 +98,6 @@ class Matiere
     public function setClasse(?Classe $classe): static
     {
         $this->classe = $classe;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Grade>
-     */
-    public function getGrades(): Collection
-    {
-        return $this->grades;
-    }
-
-    public function addGrade(Grade $grade): static
-    {
-        if (!$this->grades->contains($grade)) {
-            $this->grades->add($grade);
-            $grade->setMatiere($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGrade(Grade $grade): static
-    {
-        if ($this->grades->removeElement($grade)) {
-            // set the owning side to null (unless already changed)
-            if ($grade->getMatiere() === $this) {
-                $grade->setMatiere(null);
-            }
-        }
 
         return $this;
     }
