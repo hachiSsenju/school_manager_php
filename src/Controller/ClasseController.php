@@ -25,7 +25,7 @@ final class ClasseController extends AbstractController
         $data = array_map(function ($classe) {
             $matieres = $classe->getMatieres()->toArray();
             $eleves = $classe->getEleves()->toArray();
-            $trimesters = $classe->getTrimesters()->toArray();
+            
             $ecole = $classe->getEcole();
             $ecoleClasses = $ecole->getClasse()->toArray();
             $ecolePRofs = $ecole->getProfesseurs()->toArray();
@@ -58,7 +58,7 @@ final class ClasseController extends AbstractController
                     'classes' => array_map(function ($classe) {
                         $matieres = $classe->getMatieres()->toArray();
                         $eleves = $classe->getEleves()->toArray();
-                        $trimesters = $classe->getTrimesters()->toArray();
+                        
 
                         // Prepare class data
                         return [
@@ -92,7 +92,7 @@ final class ClasseController extends AbstractController
                                         $eleve = $bulletin->getEleve();
                                         return [
                                             'id' => $bulletin->getId(),
-                                            'trimester' => $bulletin->getTrimester()->getLibelle(),
+                                            
                                             'classe' => $bulletin->getClasse()->getNom(),
                                             'eleve' => [
                                                 'id' => $eleve->getId(),
@@ -115,10 +115,7 @@ final class ClasseController extends AbstractController
                                                                 'coef' => $gradeh->getMatiere()->getCoefficient(),
                                                             ] : null,
                                                             "date" => $gradeh->getDate(),
-                                                            "trimester" => $gradeh->getTrimester() ? [
-                                                                'id' => $gradeh->getTrimester()->getId(),
-                                                                'libelle' => $gradeh->getTrimester()->getLibelle(),
-                                                            ] : null,
+                                                            
                                                         ];
                                                     }, $cycle->getGradeHs()->toArray())
                                                 ];
@@ -140,12 +137,7 @@ final class ClasseController extends AbstractController
                                     }, $eleve->getBulletins()->toArray()),
                                 ];
                             }, $eleves),
-                            "trimesters" => array_map(function ($trimester) {
-                                return [
-                                    'id' => $trimester->getId(),
-                                    'libelle' => $trimester->getLibelle(),
-                                ];
-                            }, $trimesters)
+                            
                         ];
                     }, $ecoleClasses),
                     'eleves' => array_map(function ($eleve) {
@@ -166,7 +158,7 @@ final class ClasseController extends AbstractController
                                 $eleve = $bulletin->getEleve();
                                 return [
                                     'id' => $bulletin->getId(),
-                                    'trimester' => $bulletin->getTrimester()->getLibelle(),
+                                    
                                     'classe' => $bulletin->getClasse()->getNom(),
                                     'eleve' => [
                                         'id' => $eleve->getId(),
@@ -189,10 +181,7 @@ final class ClasseController extends AbstractController
                                                         'coef' => $gradeh->getMatiere()->getCoefficient(),
                                                     ] : null,
                                                     "date" => $gradeh->getDate(),
-                                                    "trimester" => $gradeh->getTrimester() ? [
-                                                        'id' => $gradeh->getTrimester()->getId(),
-                                                        'libelle' => $gradeh->getTrimester()->getLibelle(),
-                                                    ] : null,
+                                                    
                                                 ];
                                             }, $cycle->getGradeHs()->toArray())
                                         ];
@@ -235,7 +224,7 @@ final class ClasseController extends AbstractController
                             $eleve = $bulletin->getEleve();
                             return [
                                 'id' => $bulletin->getId(),
-                                'trimester' => $bulletin->getTrimester()->getLibelle(),
+                                
                                 'classe' => $bulletin->getClasse()->getNom(),
                                 'eleve' => [
                                     'id' => $eleve->getId(),
@@ -258,10 +247,7 @@ final class ClasseController extends AbstractController
                                                     'coef' => $gradeh->getMatiere()->getCoefficient(),
                                                 ] : null,
                                                 "date" => $gradeh->getDate(),
-                                                "trimester" => $gradeh->getTrimester() ? [
-                                                    'id' => $gradeh->getTrimester()->getId(),
-                                                    'libelle' => $gradeh->getTrimester()->getLibelle(),
-                                                ] : null,
+                                                
                                             ];
                                         }, $cycle->getGradeHs()->toArray())
                                     ];
@@ -283,12 +269,7 @@ final class ClasseController extends AbstractController
                         }, $eleve->getBulletins()->toArray()),
                     ];
                 }, $eleves),
-                "trimesters" => array_map(function ($trimester) {
-                    return [
-                        'id' => $trimester->getId(),
-                        'libelle' => $trimester->getLibelle(),
-                    ];
-                }, $trimesters)
+                
 
             ];
         }, $classes);
@@ -303,7 +284,7 @@ final class ClasseController extends AbstractController
             return $this->json(['error' => 'Classe not found'], 404);
         }
         $classes = $classeRepository->find($class_id);
-        $trimesters = $classe->getTrimesters()->toArray();
+        
         $data = [
             'id'     => $classe->getId(),
             'nom'    => $classe->getNom(),
@@ -317,12 +298,7 @@ final class ClasseController extends AbstractController
                     'coefficient' => $matiere->getCoefficient(),
                 ];
             }, $classe->getMatieres()->toArray()),
-            'trimester' => array_map(function ($trimester) {
-                return [
-                    'id' => $trimester->getId(),
-                    'nom' => $trimester->getLibelle(),
-                ];
-            }, $trimesters),
+            
             'professeurs' => array_map(function ($prof) {
                 return [
                     'id' => $prof->getId(),
@@ -344,7 +320,7 @@ final class ClasseController extends AbstractController
                         $eleve = $bulletin->getEleve();
                         return [
                             'id' => $bulletin->getId(),
-                            'trimester' => $bulletin->getTrimester()->getLibelle(),
+                            
                             'classe' => $bulletin->getClasse()->getNom(),
                             'eleve' => [
                                 'id' => $eleve->getId(),
@@ -367,10 +343,7 @@ final class ClasseController extends AbstractController
                                                 'coef' => $gradeh->getMatiere()->getCoefficient(),
                                             ] : null,
                                             "date" => $gradeh->getDate(),
-                                            "trimester" => $gradeh->getTrimester() ? [
-                                                'id' => $gradeh->getTrimester()->getId(),
-                                                'libelle' => $gradeh->getTrimester()->getLibelle(),
-                                            ] : null,
+                                            
                                         ];
                                     }, $cycle->getGradeHs()->toArray())
                                 ];
@@ -409,7 +382,7 @@ final class ClasseController extends AbstractController
         $classe = $eleve->getClasse();
         $data =
             $matieres = $classe->getMatieres()->toArray();
-        $trimesters = $classe->getTrimesters()->toArray();
+        
         $data = [
             'id'     => $classe->getId(),
             'nom'    => $classe->getNom(),
@@ -423,12 +396,7 @@ final class ClasseController extends AbstractController
                     'coefficient' => $matiere->getCoefficient(),
                 ];
             }, $matieres),
-            'trimester' => array_map(function ($trimester) {
-                return [
-                    'id' => $trimester->getId(),
-                    'nom' => $trimester->getLibelle(),
-                ];
-            }, $trimesters),
+            
             'eleves' => array_map(function ($eleve) {
                 return [
                     'id' => $eleve->getId(),
@@ -441,7 +409,7 @@ final class ClasseController extends AbstractController
                         $eleve = $bulletin->getEleve();
                         return [
                             'id' => $bulletin->getId(),
-                            'trimester' => $bulletin->getTrimester()->getLibelle(),
+                            
                             'classe' => $bulletin->getClasse()->getNom(),
                             'eleve' => [
                                 'id' => $eleve->getId(),
@@ -464,10 +432,7 @@ final class ClasseController extends AbstractController
                                                 'coef' => $gradeh->getMatiere()->getCoefficient(),
                                             ] : null,
                                             "date" => $gradeh->getDate(),
-                                            "trimester" => $gradeh->getTrimester() ? [
-                                                'id' => $gradeh->getTrimester()->getId(),
-                                                'libelle' => $gradeh->getTrimester()->getLibelle(),
-                                            ] : null,
+                                            
                                         ];
                                     }, $cycle->getGradeHs()->toArray())
                                 ];
@@ -548,18 +513,13 @@ final class ClasseController extends AbstractController
         }
         $em->persist($classe);
         $em->flush();
-        $trimesters = $classe->getTrimesters()->toArray();
+        
         $data = [
             'id'     => $classe->getId(),
             'nom'    => $classe->getNom(),
             'niveau' => $classe->getNiveau(),
             'frais'  => $classe->getFrais(),
-            'trimesters' => array_map(function ($trimester) {
-                return [
-                    'id' => $trimester->getId(),
-                    'Libelle' => $trimester->getLibelle(),
-                ];
-            }, $trimesters),
+           
             'professeurs' => array_map(function ($prof) {
                 return [
                     'id' => $prof->getId(),

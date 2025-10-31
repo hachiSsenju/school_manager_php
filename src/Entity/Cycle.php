@@ -37,6 +37,12 @@ class Cycle
     #[ORM\OneToMany(targetEntity: Moyenne::class, mappedBy: 'cycle')]
     private Collection $moyennes;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $moyenne = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $rank = null;
+
     public function __construct()
     {
         $this->Grade_Hs = new ArrayCollection();
@@ -140,6 +146,30 @@ class Cycle
                 $moyenne->setCycle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMoyenne(): ?float
+    {
+        return $this->moyenne;
+    }
+
+    public function setMoyenne(?float $moyenne): static
+    {
+        $this->moyenne = $moyenne;
+
+        return $this;
+    }
+
+    public function getRank(): ?int
+    {
+        return $this->rank;
+    }
+
+    public function setRank(?int $rank): static
+    {
+        $this->rank = $rank;
 
         return $this;
     }

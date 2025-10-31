@@ -23,10 +23,6 @@ class GradeH
     #[ORM\Column(length: 255)]
     private ?string $date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'gradeHs')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Trimester $trimester = null;
-
     #[ORM\ManyToOne(inversedBy: 'Grade_Hs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Cycle $cycle = null;
@@ -75,18 +71,6 @@ class GradeH
     public function setDate(string $date): static
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getTrimester(): ?Trimester
-    {
-        return $this->trimester;
-    }
-
-    public function setTrimester(?Trimester $trimester): static
-    {
-        $this->trimester = $trimester;
 
         return $this;
     }

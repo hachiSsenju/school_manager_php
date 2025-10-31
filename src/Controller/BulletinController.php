@@ -79,6 +79,7 @@ final class BulletinController extends AbstractController
             ] : null,
             'Cycles' => array_map(function ($cycle) {
                 return [
+                    "rank" => $cycle->getRank(),
                     'id' => $cycle->getId(),
                     'libelle' => $cycle->getLibelle(),
                 ];
@@ -94,7 +95,6 @@ final class BulletinController extends AbstractController
             $eleve = $bulletin->getEleve();
             return [
                 'id' => $bulletin->getId(),
-                'trimester' => $bulletin->getTrimester()->getLibelle(),
                 'classe' => $bulletin->getClasse()->getNom(),
                 'eleve' => [
                     'id' => $eleve->getId(),
@@ -106,6 +106,7 @@ final class BulletinController extends AbstractController
                 ],
                 "cycles" => array_map(function ($cycle) {
                     return [
+                        "rank" => $cycle->getRank(),
                         "id" => $cycle->getId(),
                         'libelle' => $cycle->getLibelle(),
                         'gradeH' => array_map(function ($gradeh) {
@@ -154,7 +155,7 @@ final class BulletinController extends AbstractController
             $eleve = $bulletin->getEleve();
             return [
                 'id' => $bulletin->getId(),
-                'trimester' => $bulletin->getTrimester()->getLibelle(),
+                
                 'classe' => $bulletin->getClasse()->getNom(),
                 'eleve' => [
                     'id' => $eleve->getId(),
@@ -166,6 +167,7 @@ final class BulletinController extends AbstractController
                 ],
                 "cycles" => array_map(function ($cycle) {
                     return [
+                        "rank" => $cycle->getRank(),
                         "id" => $cycle->getId(),
                         'libelle' => $cycle->getLibelle(),
                         'gradeH' => array_map(function ($gradeh) {
@@ -212,7 +214,7 @@ final class BulletinController extends AbstractController
             $eleve = $bulletin->getEleve();
             return [
                 'id' => $bulletin->getId(),
-                'trimester' => $bulletin->getTrimester()->getLibelle(),
+                
                 'classe' => $bulletin->getClasse()->getNom(),
                 'eleve' => [
                     'id' => $eleve->getId(),
@@ -224,6 +226,7 @@ final class BulletinController extends AbstractController
                 ],
                 "cycles" => array_map(function ($cycle) {
                     return [
+                        "rank" => $cycle->getRank(),
                         "id" => $cycle->getId(),
                         'libelle' => $cycle->getLibelle(),
                         'gradeH' => array_map(function ($gradeh) {
@@ -258,6 +261,124 @@ final class BulletinController extends AbstractController
 
             ];
         }, $eleve->getBulletins()->toArray());
+        return $this->json($data);
+    }
+    #[Route('/api/bulletins/{id}', name: 'getbyid_bulletin', methods: ['GET'])]
+    public function byId(BulletinRepository $bulletinRepository, int $id): Response
+    {
+        $bulletin_id = intval($id);
+        $bulletin = $bulletinRepository->find($bulletin_id);
+        $eleve = $bulletin->getEleve();
+        $data = [
+            'id' => $bulletin->getId(),
+            'classe' => $bulletin->getClasse()->getNom(),
+            'eleve' => [
+                'id' => $eleve->getId(),
+                'nom' => $eleve->getNom(),
+                'prenom' => $eleve->getPrenom(),
+                'birthday' => $eleve->getBirthday(),
+                'solde_initial' => $eleve->getSoldeInitial(),
+                'email_parent' => $eleve->getEmailParent(),
+            ],
+            "cycles" => array_map(function ($cycle) {
+                return [
+                    "rank" => $cycle->getRank(),
+                    "id" => $cycle->getId(),
+                    'libelle' => $cycle->getLibelle(),
+                    'gradeH' => array_map(function ($gradeh) {
+                        return [
+                            'id' => $gradeh->getId(),
+                            'type' => $gradeh->getType(),
+                            "matiere" => $gradeh->getMatiere() ? [
+                                'id' => $gradeh->getMatiere()->getId(),
+                                'coef' => $gradeh->getMatiere()->getCoefficient(),
+                            ] : null,
+                            "date" => $gradeh->getDate(),
+                            "trimester" => $gradeh->getTrimester() ? [
+                                'id' => $gradeh->getTrimester()->getId(),
+                                'libelle' => $gradeh->getTrimester()->getLibelle(),
+                            ] : null,
+                        ];
+                    }, $cycle->getGradeHs()->toArray())
+                ];
+            }, $bulletin->getCycles()->toArray()),
+            "gradeP" => array_map(function ($gradep) {
+                return [
+                    'id' => $gradep()->getId(),
+                    'note' => $gradep->getNote(),
+                    'mois' => $gradep->getMois(),
+                    "matiere" => $gradep->getMatiere() ? [
+                        'id' => $gradep->getMatiere()->getId(),
+                        'coef' => $gradep->getMatiere()->getCoefficient(),
+                    ] : null,
+
+                ];
+            }, $bulletin->getGradePs()->toArray())
+        ];
+        return $this->json($data);
+    }
+
+    #[Route('/api/bulletins/eleve/classe/{eleve_id}/{classe_id}', name: 'getbyEleveAndClasseid_bulletin', methods: ['GET'])]
+    public function byClasseAndEleveId(ClasseRepository $classeRepository, EleveRepository $eleveRepository, BulletinRepository $bulletinRepository, int $eleve_id, int $classe_id): Response
+    {
+        $classe = $classeRepository->find($classe_id);
+        $eleve = $eleveRepository->find($eleve_id);
+
+        if (!$classe || !$eleve) {
+            return $this->json(['error' => 'Classe or Eleve not found'], 404);
+        }
+
+        $bulletin = $bulletinRepository->findOneBy(['eleve' => $eleve, 'Classe' => $classe]);
+
+        if (!$bulletin) {
+            return $this->json(['error' => 'Bulletin not found for this eleve and classe'], 404);
+        }
+
+        $data = [
+            'id' => $bulletin->getId(),
+            'classe' => $bulletin->getClasse()->getNom(),
+            'eleve' => [
+                'id' => $eleve->getId(),
+                'nom' => $eleve->getNom(),
+                'prenom' => $eleve->getPrenom(),
+                'birthday' => $eleve->getBirthday(),
+                'solde_initial' => $eleve->getSoldeInitial(),
+                'email_parent' => $eleve->getEmailParent(),
+            ],
+            "cycles" => array_map(function ($cycle) {
+                return [
+                    "rank" => $cycle->getRank(),
+                    "id" => $cycle->getId(),
+                    'libelle' => $cycle->getLibelle(),
+                    "moyenne" => $cycle->getMoyenne(),
+                    'gradeH' => array_map(function ($gradeh) {
+                        return [
+                            'id' => $gradeh->getId(),
+                            "note" => $gradeh->getNote(),
+                            'type' => $gradeh->getType(),
+                            "matiere" => $gradeh->getMatiere() ? [
+                                'id' => $gradeh->getMatiere()->getId(),
+                                'coef' => $gradeh->getMatiere()->getCoefficient(),
+                            ] : null,
+                            "date" => $gradeh->getDate(),
+                            
+                        ];
+                    }, $cycle->getGradeHs()->toArray())
+                ];
+            }, $bulletin->getCycles()->toArray()),
+            "gradeP" => array_map(function ($gradep) {
+                return [
+                    'id' => $gradep->getId(),
+                    'note' => $gradep->getNote(),
+                    'mois' => $gradep->getMois(),
+                    "matiere" => $gradep->getMatiere() ? [
+                        'id' => $gradep->getMatiere()->getId(),
+                        'coef' => $gradep->getMatiere()->getCoefficient(),
+                    ] : null,
+                ];
+            }, $bulletin->getGradePs()->toArray())
+        ];
+
         return $this->json($data);
     }
     #[Route('/api/bulletins/trimester/{id}', name: 'get_bulletin_by_trimester_id', methods: ['GET'])]
@@ -300,18 +421,18 @@ final class BulletinController extends AbstractController
         if (!$bulletin) {
             return $this->json(['message' => 'No bulletin found for this student and trimester'], 404);
         }
-//  id: string;
-//   nom: string;
-//   classe: Classe;
-//   bulletins: Bulletin[];
-//   grades: Grade[];
+        //  id: string;
+        //   nom: string;
+        //   classe: Classe;
+        //   bulletins: Bulletin[];
+        //   grades: Grade[];
         // Map response data
         $eleve = $bulletin->getEleve();
         $data = [
             'id' => $bulletin->getId(),
             'trimester' => [
-                "id"=>$bulletin->getTrimester()->getId(),
-                "nom"=>$bulletin->getTrimester()->getLibelle(),
+                "id" => $bulletin->getTrimester()->getId(),
+                "nom" => $bulletin->getTrimester()->getLibelle(),
             ],
             'classe' => $bulletin->getClasse()->getNom(),
             'eleve' => [
@@ -328,7 +449,7 @@ final class BulletinController extends AbstractController
                     'libelle' => $cycle->getLibelle(),
                     'gradeH' => array_map(function ($gradeh) {
                         return [
-                            'note' =>$gradeh->getNote(),
+                            'note' => $gradeh->getNote(),
                             'id' => $gradeh->getId(),
                             'type' => $gradeh->getType(),
                             "matiere" => $gradeh->getMatiere() ? [

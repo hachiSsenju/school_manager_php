@@ -36,14 +36,8 @@ final class EleveController extends AbstractController
                 'solde_initial' => $eleve->getSoldeInitial(),
                 'email_parent' => $eleve->getEmailParent(),
                 'bulletins' => array_map(function ($bulletin) {
-                    $trimester = $bulletin->getTrimester();
-                    return [
-                        'id' => $bulletin->getId(),
-                        'trimester' => [
-                            'id' => $trimester->getId(),
-                            'libelle' => $trimester->getLibelle(),
-                        ],
-                    ];
+                    
+                   
                 }, $bulletins),
                 'classe' => $classe ? [
                     'id' => $classe->getId(),
@@ -79,7 +73,7 @@ final class EleveController extends AbstractController
                 $eleve = $bulletin->getEleve();
                 return [
                     'id' => $bulletin->getId(),
-                    'trimester' => $bulletin->getTrimester()->getLibelle(),
+                    
                     'classe' => $bulletin->getClasse()->getNom(),
                     'eleve' => [
                         'id' => $eleve->getId(),
@@ -103,10 +97,7 @@ final class EleveController extends AbstractController
                                         'coef' => $gradeh->getMatiere()->getCoefficient(),
                                     ] : null,
                                     "date" => $gradeh->getDate(),
-                                    "trimester" => $gradeh->getTrimester() ? [
-                                        'id' => $gradeh->getTrimester()->getId(),
-                                        'libelle' => $gradeh->getTrimester()->getLibelle(),
-                                    ] : null,
+                                    
                                 ];
                             }, $cycle->getGradeHs()->toArray())
                         ];
@@ -132,12 +123,7 @@ final class EleveController extends AbstractController
                 'nom' => $classe->getNom(),
                 'niveau' => $classe->getNiveau(),
                 'frais' => $classe->getFrais(),
-                 'trimester' => array_map(function ($trimester) {
-                return [
-                    'id' => $trimester->getId(),
-                    'nom' => $trimester->getLibelle(),
-                ];
-            }, $classe->getTrimesters()->toArray()),
+                 
 
             ] : null,
             "ecole" =>[
@@ -218,14 +204,8 @@ final class EleveController extends AbstractController
                 'solde_initial' => $eleve->getSoldeInitial(),
                 'email_parent' => $eleve->getEmailParent(),
                 'bulletins' => array_map(function ($bulletin) {
-                    $trimester = $bulletin->getTrimester();
-                    return [
-                        'id' => $bulletin->getId(),
-                        'trimester' => [
-                            'id' => $trimester->getId(),
-                            'libelle' => $trimester->getLibelle(),
-                        ],
-                    ];
+                    
+                   
                 }, $bulletins),
 
             ];
@@ -326,12 +306,7 @@ final class EleveController extends AbstractController
                     'coefficient' => $matiere->getCoefficient(),
                 ];
             },$classe->getMatieres()->toArray()),
-            'trimester' => array_map(function ($trimester) {
-                return [
-                    'id' => $trimester->getId(),
-                    'nom' => $trimester->getLibelle(),
-                ];
-            }, $classe->getTrimesters()->toArray()),
+            
             
         ];
         return $this->json($data);

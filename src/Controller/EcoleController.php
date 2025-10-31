@@ -35,7 +35,6 @@ final class EcoleController extends AbstractController
                 'classes' => array_map(function ($classe) {
                     $matieres = $classe->getMatieres()->toArray();
                     $eleves = $classe->getEleves()->toArray();
-                    $trimesters = $classe->getTrimesters()->toArray();
                     return [
                         'id' => $classe->getId(),
                         'nom' => $classe->getNom(),
@@ -59,14 +58,12 @@ final class EcoleController extends AbstractController
                                 "bulletins" => array_map(function ($bulletin) {
                                     return [
                                         'id' => $bulletin->getId(),
-                                        'trimester' => $bulletin->getTrimester() ? $bulletin->getTrimester()->getLibelle() : null,
                                         'grades' => array_map(function ($grade) {
                                             return [
                                                 'id' => $grade->getId(),
                                                 'note' => $grade->getNote(),
                                                 'note_maximal' => $grade->getNoteMaximal(),
                                                 'type_examen' => $grade->getTypeExamen(),
-                                                'trimestre' => $grade->getTrimester(),
                                                 'date' => $grade->getDate(),
                                                 'matiere' => $grade->getMatiere() ? [
                                                     'id' => $grade->getMatiere()->getId(),
@@ -85,13 +82,6 @@ final class EcoleController extends AbstractController
                                 ]
                             ];
                         }, $eleves),
-                        "trimesters" => array_map(function ($trimester) {
-                            return [
-                                'id' => $trimester->getId(),
-                                'libelle' => $trimester->getLibelle(),
-                            ];
-                        }, $trimesters)
-
                     ];
                 }, $classes),
                 'eleves' => array_map(function ($eleve) {
@@ -111,14 +101,13 @@ final class EcoleController extends AbstractController
                         "bulletins" => array_map(function ($bulletin) {
                             return [
                                 'id' => $bulletin->getId(),
-                                'trimester' => $bulletin->getTrimester() ? $bulletin->getTrimester()->getLibelle() : null,
                                 'grades' => array_map(function ($grade) {
                                     return [
                                         'id' => $grade->getId(),
                                         'note' => $grade->getNote(),
                                         'note_maximal' => $grade->getNoteMaximal(),
                                         'type_examen' => $grade->getTypeExamen(),
-                                        'trimestre' => $grade->getTrimester(),
+
                                         'date' => $grade->getDate(),
                                         'matiere' => $grade->getMatiere() ? [
                                             'id' => $grade->getMatiere()->getId(),
@@ -194,7 +183,6 @@ final class EcoleController extends AbstractController
             'classes' => array_map(function ($classe) {
                 $matieres = $classe->getMatieres()->toArray();
                 $eleves = $classe->getEleves()->toArray();
-                $trimesters = $classe->getTrimesters()->toArray();
 
                 // Prepare class data
                 return [
@@ -227,20 +215,13 @@ final class EcoleController extends AbstractController
                             "bulletins" => array_map(function ($bulletin) {
                                 return [
                                     'id' => $bulletin->getId(),
-                                    'trimester' => $bulletin->getTrimester() ? $bulletin->getTrimester()->getLibelle() : null,
                                     'gradesH' => array_map(function ($grade) {
                                         return [
                                             'id' => $grade->getId(),
                                             'note' => $grade->getNote(),
                                             'type' => $grade->getType(),
-                                            'trimestre' => $grade->getTrimester() ? [
-                                                'id' => $grade->getTrimester()->getId(),
-                                                'libelle' => $grade->getTrimester()->getLibelle(),
-                                            ] : null,
-                                            'cycle' => $grade->getCycle() ? [
-                                                'id' => $grade->getTrimester()->getId(),
-                                                'libelle' => $grade->getTrimester()->getLibelle(),
-                                            ] : null,
+
+                                            'cycle' => $grade->getCycle() ? [] : null,
                                             'date' => $grade->getDate(),
                                             'matiere' => $grade->getMatiere() ? [
                                                 'id' => $grade->getMatiere()->getId(),
@@ -254,10 +235,7 @@ final class EcoleController extends AbstractController
                                             'id' => $grade->getId(),
                                             'note' => $grade->getNote(),
                                             'mois' => $grade->getMois(),
-                                            'trimestre' => $grade->getTrimester() ? [
-                                                'id' => $grade->getTrimester()->getId(),
-                                                'libelle' => $grade->getTrimester()->getLibelle(),
-                                            ] : null,
+
                                             'date' => $grade->getDate(),
                                             'matiere' => $grade->getMatiere() ? [
                                                 'id' => $grade->getMatiere()->getId(),
@@ -270,12 +248,7 @@ final class EcoleController extends AbstractController
                             }, $eleve->getBulletins()->toArray()),
                         ];
                     }, $eleves),
-                    "trimesters" => array_map(function ($trimester) {
-                        return [
-                            'id' => $trimester->getId(),
-                            'libelle' => $trimester->getLibelle(),
-                        ];
-                    }, $trimesters)
+
                 ];
             }, $classes),
             'eleves' => array_map(function ($eleve) {
@@ -294,53 +267,48 @@ final class EcoleController extends AbstractController
                     ],
                     "bulletins" => array_map(function ($bulletin) {
                         $eleve = $bulletin->getEleve();
-            return [
-                'id' => $bulletin->getId(),
-                'trimester' => $bulletin->getTrimester()->getLibelle(),
-                'classe' => $bulletin->getClasse()->getNom(),
-                'eleve' => [
-                    'id' => $eleve->getId(),
-                    'nom' => $eleve->getNom(),
-                    'prenom' => $eleve->getPrenom(),
-                    'birthday' => $eleve->getBirthday(),
-                    'solde_initial' => $eleve->getSoldeInitial(),
-                    'email_parent' => $eleve->getEmailParent(),
-                ],
-                "cycles" => array_map(function ($cycle) {
-                    return [
-                        "id" => $cycle->getId(),
-                        'libelle' => $cycle->getLibelle(),
-                        'gradeH' => array_map(function ($gradeh) {
-                            return [
-                                'id' => $gradeh->getId(),
-                                'type' => $gradeh->getType(),
-                                "matiere" => $gradeh->getMatiere() ? [
-                                    'id' => $gradeh->getMatiere()->getId(),
-                                    'coef' => $gradeh->getMatiere()->getCoefficient(),
-                                ] : null,
-                                "date" => $gradeh->getDate(),
-                                "trimester" => $gradeh->getTrimester() ? [
-                                    'id' => $gradeh->getTrimester()->getId(),
-                                    'libelle' => $gradeh->getTrimester()->getLibelle(),
-                                ] : null,
-                            ];
-                        }, $cycle->getGradeHs()->toArray())
-                    ];
-                }, $bulletin->getCycles()->toArray()),
-                "gradeP" => array_map(function ($gradep) {
-                    return [
-                        'id' => $gradep()->getId(),
-                        'note' => $gradep->getNote(),
-                        'mois' => $gradep->getMois(),
-                        "matiere" => $gradep->getMatiere() ? [
-                            'id' => $gradep->getMatiere()->getId(),
-                            'coef' => $gradep->getMatiere()->getCoefficient(),
-                        ] : null,
+                        return [
+                            'id' => $bulletin->getId(),
+                            'classe' => $bulletin->getClasse()->getNom(),
+                            'eleve' => [
+                                'id' => $eleve->getId(),
+                                'nom' => $eleve->getNom(),
+                                'prenom' => $eleve->getPrenom(),
+                                'birthday' => $eleve->getBirthday(),
+                                'solde_initial' => $eleve->getSoldeInitial(),
+                                'email_parent' => $eleve->getEmailParent(),
+                            ],
+                            "cycles" => array_map(function ($cycle) {
+                                return [
+                                    "id" => $cycle->getId(),
+                                    'libelle' => $cycle->getLibelle(),
+                                    'gradeH' => array_map(function ($gradeh) {
+                                        return [
+                                            'id' => $gradeh->getId(),
+                                            'type' => $gradeh->getType(),
+                                            "matiere" => $gradeh->getMatiere() ? [
+                                                'id' => $gradeh->getMatiere()->getId(),
+                                                'coef' => $gradeh->getMatiere()->getCoefficient(),
+                                            ] : null,
+                                            "date" => $gradeh->getDate(),
+                                        ];
+                                    }, $cycle->getGradeHs()->toArray())
+                                ];
+                            }, $bulletin->getCycles()->toArray()),
+                            "gradeP" => array_map(function ($gradep) {
+                                return [
+                                    'id' => $gradep()->getId(),
+                                    'note' => $gradep->getNote(),
+                                    'mois' => $gradep->getMois(),
+                                    "matiere" => $gradep->getMatiere() ? [
+                                        'id' => $gradep->getMatiere()->getId(),
+                                        'coef' => $gradep->getMatiere()->getCoefficient(),
+                                    ] : null,
 
-                    ];
-                }, $bulletin->getGradePs()->toArray())
+                                ];
+                            }, $bulletin->getGradePs()->toArray())
 
-            ];
+                        ];
                     }, $eleve->getBulletins()->toArray()),
                 ];
             }, $eleves),

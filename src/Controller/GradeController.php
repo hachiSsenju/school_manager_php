@@ -222,18 +222,16 @@ final class GradeController extends AbstractController
     public function addGradeH(Request $request, EntityManagerInterface $em): Response
     {
         $data = json_decode($request->getContent(), true);
-        if (!isset($data['note'], $data['type'], $data['trimester_id'], $data['date'], $data['matiere_id'], $data["cycle_id"])) {
+        if (!isset($data['note'], $data['type'], $data['date'], $data['matiere_id'], $data["cycle_id"])) {
             return $this->json(['error' => 'Invalid data'], 400);
         }
 
         $matiere_id = intval($data['matiere_id']);
-        $trimestre_id = intval($data['trimester_id']);
         $cycle_id = intval($data['cycle_id']);
         $matiere = $em->getRepository(Matiere::class)->find($matiere_id);
-        $trimester = $em->getRepository(Trimester::class)->find($trimestre_id);
         $cycle = $em->getRepository(Cycle::class)->find($cycle_id);
 
-        if ( !$matiere || !$trimester || !$cycle) {
+        if ( !$matiere || !$cycle) {
             return $this->json(['error' => 'Eleve or Matiere not found'], 404);
         }
 
@@ -245,7 +243,6 @@ final class GradeController extends AbstractController
             }
             $grade->setNote($data['note']);
             $grade->setType($data['type']);
-            $grade->setTrimester($trimester);
             $grade->setDate($data['date']);
             $grade->setMatiere($matiere);
             $grade->setCycle($cycle);
@@ -257,7 +254,6 @@ final class GradeController extends AbstractController
             $grade = new GradeH();
             $grade->setNote($data['note']);
             $grade->setType($data['type']);
-            $grade->setTrimester($trimester);
             $grade->setDate($data['date']);
             $grade->setMatiere($matiere);
             $grade->setCycle($cycle);
@@ -272,10 +268,6 @@ final class GradeController extends AbstractController
             'id' => $grade->getId(),
             'note' => $grade->getNote(),
             'type_examen' => $grade->getType(),
-            'trimester' => $grade->getTrimester() ? [
-                'id' => $grade->getTrimester()->getId(),
-                'libelle' => $grade->getTrimester()->getLibelle(),
-            ] : null,
             'date' => $grade->getDate(),
             'matiere' => $grade->getMatiere() ? [
                 'id' => $grade->getMatiere()->getId(),
